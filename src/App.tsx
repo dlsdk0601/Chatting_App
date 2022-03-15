@@ -1,14 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { createGlobalStyle, ThemeProvider } from 'styled-components';
-import { isLight } from './atom';
+import { isLight, user } from './atom';
 import Router from './Router';
 import { lightTheme, darkTheme } from './theme';
 
 function App() {
 
   const lightMode = useRecoilValue(isLight);
+  const [ userData, setUserData ] = useRecoilState(user);
+  
+  useEffect(() => {
+
+    const userData = JSON.parse(localStorage.getItem("userData") || "{}");
+    
+    setUserData(prev => {
+      return Object.keys(userData).length !== 0 ? userData : prev;
+    });
+
+  }, [])
 
   return (
     <ThemeProvider theme={lightMode ? lightTheme : darkTheme}>

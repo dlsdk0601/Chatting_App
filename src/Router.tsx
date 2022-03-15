@@ -1,7 +1,8 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import Main from "./page/main/Main";
 import Header from "./page/header/Header";
+import Login from "./page/login/Login";
+import Main from "./page/main/Main";
 
 const Router = () => {
 
@@ -9,7 +10,8 @@ const Router = () => {
         <>
             <Header />
             <Routes>
-                <Route path="/" element={<Main />} />
+                <Route path="/" element={<Login />} />
+                <Route path="/main" element={<Main />} />
             </Routes>
         </>
     )
