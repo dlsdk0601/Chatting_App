@@ -30,12 +30,10 @@ const Login = () => {
     }
 
     useEffect( () => {
-
         const userData = JSON.parse(localStorage.getItem("userData") || "{}");
         if(userData.isLogged){
             navigate("/main");
         }
-
     }, [])
 
     return (
@@ -88,7 +86,7 @@ const Wrapper = styled.div`
 
     /* 테블릿 */
     @media screen and (max-width: 1300px) {
-        top: 40%;
+        top: 50%;
     }
     /* 모바일 */
     @media screen and (max-width: 800px) {
@@ -96,7 +94,6 @@ const Wrapper = styled.div`
         position: static;
         transform: translate(0, 10vh);
         border: none;
-        /* border-radius: 0; */
         overflow: none;
         width: 100%;
         height: auto;
@@ -225,7 +222,11 @@ const RightTitle = styled.h1`
         font-size: calc(100vw*(32/1300));
     }
     @media screen and (max-width: 800px){
-        font-size: calc(100vw*(18/1300));
+        font-size: calc(100vw*(24/1300));
+        &::after{
+        width: 30px;
+        height: 2px;
+    }
     }
 `;
 

@@ -32,6 +32,7 @@ const Wrapper = styled.header`
     position: fixed;
     right: 5%; 
     top: 20px;
+    z-index: 1;
 `;
 
 const Frame = styled.div<CircleProps>`

@@ -2,10 +2,10 @@ import { DefaultTheme } from "styled-components";
 
 export const lightTheme: DefaultTheme = {
     bgColor: "white",
-    textColor: "#222222"
+    textColor: "rgb(47, 54, 64)"
 }
 
 export const darkTheme: DefaultTheme = {
-    bgColor: "#222222",
+    bgColor: "rgb(47, 54, 64)",
     textColor: "white"
 }

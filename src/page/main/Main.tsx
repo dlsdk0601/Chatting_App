@@ -1,11 +1,15 @@
 import React from "react";
+import Navbar from "../navbar/Navbar";
 
 const Main = () => {
 
     return (
-        <div>
-            asdfasdf
-        </div>
+        <>
+            <Navbar />
+            <div>
+                asdfasdf
+            </div>
+        </>
     )
 };
 
