@@ -18,6 +18,7 @@ const RoomName = ({ name }: IRoomName) => {
     )
 }
 
+
 const NameBox = styled.div`
     display: flex;
     justify-content: space-between;
