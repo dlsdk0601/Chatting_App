@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { isLight, user } from "../../atom";
+import { socket } from "../../socket";
 
 //img  
 import Person from "../../img/person.png";
@@ -23,6 +24,7 @@ interface IisNav{
 
 const Navbar = () => {
 
+    
     const userData = useRecoilValue(user);
     const light = useRecoilValue(isLight);
     const [ isNav, setIsNav ] = useState<boolean>(false);
@@ -37,7 +39,19 @@ const Navbar = () => {
             return arr;
         });
         setValue("roomName", "");
+
+        socket.emit("enterRoom", roomName, userData.name, (nickname: string) => {
+            alert(`${nickname} 들어오기 성공`);
+        })
     }
+
+    const deleteItem = (name: string) => {
+        setRoomList((prev: string[]) => {
+            const arr: string[] = [...prev];
+            const newArr = arr.filter(item => item !== name);
+            return newArr;
+        })
+    };
 
     return (
         <>
@@ -60,7 +74,7 @@ const Navbar = () => {
                 <RoomBox>
                     {
                         roomList.length > 0 ? 
-                            roomList.map(item => <RoomName name={item} />)
+                            roomList.map(item => <RoomName key={Date.now()} deleteItem={deleteItem} name={item} />)
                         : 
                             <></>
                     }
@@ -106,7 +120,7 @@ const Profile = styled.div`
 
     @media screen and (max-width: 800px){
         height: calc(100vw*(100/800));
-        margin-top: calc(100vw*(200/800));
+        margin-top: calc(100vh*(100/800));
     }
 `;
 
@@ -132,12 +146,12 @@ const Name = styled.p`
 
     @media screen and (max-width: 1300px){
         font-size: calc(100vw*(24/1300));
-        margin: calc(100vw*(10px/1300)) 0;
+        margin: calc(100vh*(10px/1300)) 0;
     }
 
     @media screen and (max-width: 800px){
         font-size: calc(100vw*(24/800));
-        margin: calc(100vw*(10/800)) 0;
+        margin: calc(100vh*(10/800)) 0;
     }
 `;
 
@@ -148,12 +162,12 @@ const Email = styled.p`
 
     @media screen and (max-width: 1300px){
         font-size: calc(100vw*(24/1300));
-        margin-bottom: calc(100vw*(10/1300));
+        margin-bottom: calc(100vh*(10/1300));
     }
 
     @media screen and (max-width: 800px){
         font-size: calc(100vw*(24/800));
-        margin-bottom: calc(100vw*(10/800));
+        margin-bottom: calc(100vh*(10/800));
     }
 `;
 
@@ -178,11 +192,11 @@ const Form = styled.form`
     margin-top: 80px;
 
     @media screen and (max-width: 1300px){
-        margin-top: calc(100vw*(80/1300));
+        margin-top: calc(100vh*(80/1300));
     }
 
     @media screen and (max-width: 800px){
-        margin-top: calc(100vw*(80/800));
+        margin-top: calc(100vh*(80/800));
     }
 `;
 

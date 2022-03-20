@@ -124,8 +124,11 @@ const TextBox = styled.div`
     transform: translate(-50%, -50%);
     width: 90%;
     
+    @media screen and (max-width: 1300px){
+        top: 55%;
+    }
     @media screen and (max-width: 800px){
-        top: 45%;
+        top: 55%;
     }
 `
 
@@ -152,7 +155,7 @@ const LeftTitle = styled.h1`
         }
     }
     @media screen and (max-width: 800px){
-        margin-bottom: 30px;
+        margin-bottom: 15px;
         font-size: calc(100vw*(32/800));
         &::after{
             /* width: calc(100vw*(130/800)); */
@@ -170,7 +173,7 @@ const Text = styled.p`
         line-height: 2;
     }
     @media screen and (max-width: 800px){
-        font-size: calc(100vw*(18/800));
+        font-size: calc(100vw*(30/800));
     }
 `
 const RightSection = styled.div`
@@ -222,7 +225,7 @@ const RightTitle = styled.h1`
         font-size: calc(100vw*(32/1300));
     }
     @media screen and (max-width: 800px){
-        font-size: calc(100vw*(24/1300));
+        font-size: calc(100vw*(32/1300));
         &::after{
         width: 30px;
         height: 2px;
@@ -246,7 +249,7 @@ const Input = styled.input`
         
     }
     @media screen and (max-width: 800px){
-        font-size: calc(100vw*(18/1300));
+        /* font-size: calc(100vw*(18/1300)); */
     }
 `;
 

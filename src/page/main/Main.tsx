@@ -7,7 +7,7 @@ const Main = () => {
         <>
             <Navbar />
             <div>
-                asdfasdf
+                
             </div>
         </>
     )

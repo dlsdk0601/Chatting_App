@@ -6,14 +6,15 @@ import Ex from "../../../img/ex.png";
 
 interface IRoomName{
     name: string;
+    deleteItem: (name: string) => void;
 }
 
-const RoomName = ({ name }: IRoomName) => {
+const RoomName = ({ name, deleteItem }: IRoomName) => {
 
     return (
         <NameBox>
             <Name>{name}</Name>
-            <Img src={Ex} alt="ex" />
+            <Img onClick={ () => deleteItem(name)} src={Ex} alt="ex" />
         </NameBox>
     )
 }
@@ -35,6 +36,7 @@ const Name = styled.p`
 const Img = styled.img`
     width: 30px;
     height: 30px;
+    cursor: pointer;
 `
 
 export default RoomName;

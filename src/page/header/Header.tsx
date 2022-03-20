@@ -33,20 +33,37 @@ const Wrapper = styled.header`
     right: 5%; 
     top: 20px;
     z-index: 1;
+ 
+    @media screen and (max-width: 1300px){
+        
+    }
+
+    @media screen and (max-width: 800px){
+
+    }
 `;
 
 const Frame = styled.div<CircleProps>`
     position: relative;
     width: 80px;
     height: 40px;
-    border: ${props => props.isLight ? `2px solid black` : `2px solid white`};
+    border: 2px solid ${props => props.theme.textColor};
     border-radius: 20px;
+
+    @media screen and (max-width: 1300px){
+        
+    }
+
+    @media screen and (max-width: 800px){
+        width: calc(100vw*(80/800));
+        height: calc(100vw*(40/800));
+    }
 `;
 
 const Circle = styled.div<CircleProps>`
     position: absolute;
     left: ${props => props.isLight ? `-1px` : `50%`};
-    top: -1px;
+    top: -2px;
     width: 40px;
     height: 40px;
     background-color: ${props => props.theme.textColor};
@@ -55,6 +72,16 @@ const Circle = styled.div<CircleProps>`
     display: flex;
     justify-content: center;
     align-items: center;
+
+    @media screen and (max-width: 1300px){
+        
+    }
+
+    @media screen and (max-width: 800px){
+        width: calc(100vw*(40/800));
+        height: calc(100vw*(40/800));
+        
+    }
 `;
 
 const Image = styled.img`
