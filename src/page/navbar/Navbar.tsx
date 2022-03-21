@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
@@ -34,16 +34,14 @@ const Navbar = () => {
 
     const createRoom = ({ roomName }:IRoomName ) => {
         
-        setRoomList((prev: string[]) => {
-            const arr: string[] = [...roomList, roomName];
-            return arr;
-        });
-        setValue("roomName", "");
-
         socket.emit("enterRoom", roomName, userData.name, (nickname: string) => {
-            alert(`${nickname} 들어오기 성공`);
-        })
-    }
+            setRoomList((prev: string[]) => {
+                const arr: string[] = [...roomList, roomName];
+                return arr;
+            });
+            setValue("roomName", "");
+        });
+    };
 
     const deleteItem = (name: string) => {
         setRoomList((prev: string[]) => {
@@ -52,6 +50,14 @@ const Navbar = () => {
             return newArr;
         })
     };
+
+    useEffect(() => {
+        socket.on("roomList", (rooms) => {
+            console.log("rooms")
+            console.log(rooms) 
+            // 서버에서 roomList라는 함수를 실행시켜서 전달하니까 return값을 받음.
+        });
+    }, [roomList])
 
     return (
         <>

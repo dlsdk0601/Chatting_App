@@ -12,7 +12,22 @@ const io = socketIo(server, {
         origin: "http://localhost:3000",
         methods: ["GET", "POST"]
     }
-});
+}); 
+
+const roomList = () => {
+    const { sockets: { adapter: { sids, rooms } } } = io;
+    
+    const roomList = [];
+    rooms.forEach((_, key) => {
+        if(sids.get(key) === undefined){
+            roomList.push(key)
+        }
+    });
+    console.log("rooms===");
+    console.log(rooms);
+
+    return roomList;
+}
 
 io.on("connection", (socket) => {
     console.log("socket success")
@@ -22,7 +37,11 @@ io.on("connection", (socket) => {
         socket["nickname"] = nickname;
         socket.join(roomName);
         callback(nickname);
+
+        socket.emit("roomList", roomList())
     });
+
+    
 
 });
 
