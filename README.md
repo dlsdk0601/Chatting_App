@@ -26,7 +26,7 @@
 > 지난번에 socket 공부를 할 때는 nodeJs에서 html파일을 불러와서 띄웠기 때문에, cors 오류가 딱히 없었다. 허나 이번엔 react로 작업을 진행했고, 서로 같은 로컬이라도 다른 포트 번호로 실행 시켰기 때문에 cors 오류가 떴다. 여러 가지 방법을 써서 해결해봤지만, babel 설정 오류 때문인지 cors import가 계속 오류가 났다. 때문에 scoket 관련 공식 문서를 통해 해결했다.
 
 <br />
-server.js
+
 ```server.js
 
     const socketIo = require("socket.io");

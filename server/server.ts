@@ -1,5 +1,8 @@
-import { Socket, Server } from "socket.io";
-import cors from "cors";
+// import { Socket, Server } from "socket.io";
+// import cors from "cors";
+// import express from "express";
+// import http from "http";
+
 
 const express = require("express");
 const http = require("http");
@@ -14,11 +17,11 @@ const io = socketIo(server, {
     }
 }); 
 
-const roomList = () => {
+const roomList = (): string[] => {
     const { sockets: { adapter: { sids, rooms } } } = io;
     
-    const roomList = [];
-    rooms.forEach((_, key) => {
+    const roomList: string[] = [];
+    rooms.forEach((value: any, key: string):void => {
         if(sids.get(key) === undefined){
             roomList.push(key)
         }
@@ -29,11 +32,11 @@ const roomList = () => {
     return roomList;
 }
 
-io.on("connection", (socket) => {
+io.on("connection", (socket: any):void => {
     console.log("socket success")
     socket["nickname"] = "someone";
 
-    socket.on("enterRoom", (roomName, nickname, callback) => {
+    socket.on("enterRoom", (roomName: string, nickname: string, callback: (name: string) => void) => {
         socket["nickname"] = nickname;
         socket.join(roomName);
         callback(nickname);
