@@ -5,16 +5,16 @@ import Login from "./page/login/Login";
 import Main from "./page/main/Main";
 
 const Router = () => {
-
     return (
         <>
             <Header />
             <Routes>
                 <Route path="/" element={<Login />} />
                 <Route path="/main" element={<Main />} />
+                <Route path="/main/:roomname" element={<Main />} />
             </Routes>
         </>
-    )
+    );
 };
 
 export default Router;

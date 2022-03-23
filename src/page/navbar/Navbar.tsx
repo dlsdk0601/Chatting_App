@@ -5,59 +5,72 @@ import styled from "styled-components";
 import { isLight, user } from "../../atom";
 import { socket } from "../../socket";
 
-//img  
+//img
 import Person from "../../img/person.png";
 import RoomName from "./component/RoomName";
+import { useNavigate } from "react-router-dom";
 
 interface IRoomName {
     roomName: string;
 }
 
-interface IisLight{
+interface IisLight {
     isLight: boolean;
     isNav: boolean;
 }
 
-interface IisNav{
+interface IisNav {
     isNav: boolean;
 }
 
-const Navbar = () => {
+interface IRoomList {
+    id: number;
+    name: string;
+}
 
-    
+const Navbar = () => {
+    const navigate = useNavigate();
     const userData = useRecoilValue(user);
     const light = useRecoilValue(isLight);
-    const [ isNav, setIsNav ] = useState<boolean>(false);
-    const [ roomList, setRoomList ] = useState<string[]>([]);
+    const [isNav, setIsNav] = useState<boolean>(false);
+    const [roomList, setRoomList] = useState<IRoomList[]>([]);
 
     const { register, setValue, handleSubmit } = useForm<IRoomName>();
 
-    const createRoom = ({ roomName }:IRoomName ) => {
-        
-        socket.emit("enterRoom", roomName, userData.name, (nickname: string) => {
-            setRoomList((prev: string[]) => {
-                const arr: string[] = [...roomList, roomName];
-                return arr;
-            });
-            setValue("roomName", "");
-        });
+    const createRoom = ({ roomName }: IRoomName) => {
+        socket.emit(
+            "enterRoom",
+            roomName,
+            userData.name,
+            (nickname: string) => {
+                setRoomList((prev: IRoomList[]) => {
+                    const obj = {
+                        id: prev.length === 0 ? 1 : prev.length + 1,
+                        name: roomName,
+                    };
+                    const arr: IRoomList[] = [...prev, obj];
+                    return arr;
+                });
+                setValue("roomName", "");
+                navigate(`/main/${roomName}`);
+            }
+        );
     };
 
     const deleteItem = (name: string) => {
-        setRoomList((prev: string[]) => {
-            const arr: string[] = [...prev];
-            const newArr = arr.filter(item => item !== name);
+        setRoomList((prev: IRoomList[]) => {
+            const arr: IRoomList[] = [...prev];
+            const newArr = arr.filter(item => item.name !== name);
+
             return newArr;
-        })
+        });
     };
 
     useEffect(() => {
-        socket.on("roomList", (rooms) => {
-            console.log("rooms")
-            console.log(rooms) 
+        socket.on("roomList", rooms => {
             // 서버에서 roomList라는 함수를 실행시켜서 전달하니까 return값을 받음.
         });
-    }, [roomList])
+    }, [roomList]);
 
     return (
         <>
@@ -74,16 +87,26 @@ const Navbar = () => {
                 <Email>{userData.email}</Email>
                 <Form onSubmit={handleSubmit(createRoom)}>
                     <Title>채팅방 이름을 입력해주세요.</Title>
-                    <Input {...register("roomName", {required: "There is no Name"})} placeholder="Write a Room Name" />
+                    <Input
+                        {...register("roomName", {
+                            required: "There is no Name",
+                        })}
+                        placeholder="Write a Room Name"
+                    />
                     <Button>Create</Button>
                 </Form>
                 <RoomBox>
-                    {
-                        roomList.length > 0 ? 
-                            roomList.map(item => <RoomName key={Date.now()} deleteItem={deleteItem} name={item} />)
-                        : 
-                            <></>
-                    }
+                    {roomList.length > 0 ? (
+                        roomList.map(item => (
+                            <RoomName
+                                key={item.id}
+                                deleteItem={deleteItem}
+                                name={item.name}
+                            />
+                        ))
+                    ) : (
+                        <></>
+                    )}
                 </RoomBox>
             </Nav>
         </>
@@ -99,14 +122,14 @@ const Nav = styled.nav<IisNav>`
     align-items: center;
     transition: 0.5s;
 
-    @media screen and (max-width: 1300px){
-        width: calc(100vw*(350/1300));
+    @media screen and (max-width: 1300px) {
+        width: calc(100vw * (350 / 1300));
     }
 
-    @media screen and (max-width: 800px){
+    @media screen and (max-width: 800px) {
         position: absolute;
-        left: ${props => props.isNav ? "0" : "-100%"};
-        width: calc(100vw*(350/800));
+        left: ${props => (props.isNav ? "0" : "-100%")};
+        width: calc(100vw * (350 / 800));
     }
 `;
 
@@ -119,14 +142,14 @@ const Profile = styled.div`
     justify-content: center;
     align-items: center;
 
-    @media screen and (max-width: 1300px){
-        height: calc(100vw*(100/1300));
-        margin-top: calc(100vw*(150/1300));
+    @media screen and (max-width: 1300px) {
+        height: calc(100vw * (100 / 1300));
+        margin-top: calc(100vw * (150 / 1300));
     }
 
-    @media screen and (max-width: 800px){
-        height: calc(100vw*(100/800));
-        margin-top: calc(100vh*(100/800));
+    @media screen and (max-width: 800px) {
+        height: calc(100vw * (100 / 800));
+        margin-top: calc(100vh * (100 / 800));
     }
 `;
 
@@ -134,14 +157,14 @@ const Photo = styled.img`
     width: 80px;
     height: 80px;
 
-    @media screen and (max-width: 1300px){
-        width: calc(100vw*(100/1300));
-        height: calc(100vw*(100/1300));
+    @media screen and (max-width: 1300px) {
+        width: calc(100vw * (100 / 1300));
+        height: calc(100vw * (100 / 1300));
     }
 
-    @media screen and (max-width: 800px){
-        width: calc(100vw*(60/800));
-        height: calc(100vw*(60/800));
+    @media screen and (max-width: 800px) {
+        width: calc(100vw * (60 / 800));
+        height: calc(100vw * (60 / 800));
     }
 `;
 
@@ -150,14 +173,14 @@ const Name = styled.p`
     color: white;
     margin: 10px 0;
 
-    @media screen and (max-width: 1300px){
-        font-size: calc(100vw*(24/1300));
-        margin: calc(100vh*(10px/1300)) 0;
+    @media screen and (max-width: 1300px) {
+        font-size: calc(100vw * (24 / 1300));
+        margin: calc(100vh * (10px / 1300)) 0;
     }
 
-    @media screen and (max-width: 800px){
-        font-size: calc(100vw*(24/800));
-        margin: calc(100vh*(10/800)) 0;
+    @media screen and (max-width: 800px) {
+        font-size: calc(100vw * (24 / 800));
+        margin: calc(100vh * (10 / 800)) 0;
     }
 `;
 
@@ -166,14 +189,14 @@ const Email = styled.p`
     color: white;
     margin-bottom: 10px;
 
-    @media screen and (max-width: 1300px){
-        font-size: calc(100vw*(24/1300));
-        margin-bottom: calc(100vh*(10/1300));
+    @media screen and (max-width: 1300px) {
+        font-size: calc(100vw * (24 / 1300));
+        margin-bottom: calc(100vh * (10 / 1300));
     }
 
-    @media screen and (max-width: 800px){
-        font-size: calc(100vw*(24/800));
-        margin-bottom: calc(100vh*(10/800));
+    @media screen and (max-width: 800px) {
+        font-size: calc(100vw * (24 / 800));
+        margin-bottom: calc(100vh * (10 / 800));
     }
 `;
 
@@ -181,28 +204,28 @@ const Title = styled.p`
     color: white;
     margin: 10px 0;
 
-    @media screen and (max-width: 1300px){
-        font-size: calc(100vw*(20/1300));
+    @media screen and (max-width: 1300px) {
+        font-size: calc(100vw * (20 / 1300));
     }
 
-    @media screen and (max-width: 800px){
-        font-size: calc(100vw*(20/800));
+    @media screen and (max-width: 800px) {
+        font-size: calc(100vw * (20 / 800));
     }
-`
+`;
 
 const Form = styled.form`
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    margin-top: 80px;
+    margin-top: 50px;
 
-    @media screen and (max-width: 1300px){
-        margin-top: calc(100vh*(80/1300));
+    @media screen and (max-width: 1300px) {
+        margin-top: calc(100vh * (50 / 1300));
     }
 
-    @media screen and (max-width: 800px){
-        margin-top: calc(100vh*(80/800));
+    @media screen and (max-width: 800px) {
+        margin-top: calc(100vh * (50 / 800));
     }
 `;
 
@@ -213,15 +236,15 @@ const Input = styled.input`
     margin-top: 10px;
     color: white;
 
-    @media screen and (max-width: 1300px){
-        margin-top: calc(100vh*(10/1300));
+    @media screen and (max-width: 1300px) {
+        margin-top: calc(100vh * (10 / 1300));
     }
 
-    @media screen and (max-width: 800px){
-        margin-top: calc(100vh*(10/800));
-        width: calc(100vh*(150/800));
+    @media screen and (max-width: 800px) {
+        margin-top: calc(100vh * (10 / 800));
+        width: calc(100vh * (150 / 800));
     }
-`
+`;
 
 const Button = styled.button`
     background: none;
@@ -233,18 +256,18 @@ const Button = styled.button`
     border-radius: 10px;
     margin-top: 15px;
 
-    @media screen and (max-width: 1300px){
-        width: calc(100vw*(100/1300));
-        height: calc(100vh*(40/1300));
-        font-size: calc(100vw*(20/1300));
-        line-height: calc(100vh*(35/1300));
+    @media screen and (max-width: 1300px) {
+        width: calc(100vw * (100 / 1300));
+        height: calc(100vh * (40 / 1300));
+        font-size: calc(100vw * (20 / 1300));
+        line-height: calc(100vh * (35 / 1300));
     }
 
-    @media screen and (max-width: 800px){
-        width: calc(100vw*(100/800));
-        height: calc(100vh*(30/800));
-        font-size: calc(100vw*(20/800));
-        line-height: calc(100vh*(25/800));
+    @media screen and (max-width: 800px) {
+        width: calc(100vw * (100 / 800));
+        height: calc(100vh * (30 / 800));
+        font-size: calc(100vw * (20 / 800));
+        line-height: calc(100vh * (25 / 800));
     }
 `;
 
@@ -254,15 +277,15 @@ const RoomBox = styled.div`
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    
-    @media screen and (max-width: 1300px){
-        margin-top: calc(100vw*(30/1300));
+
+    @media screen and (max-width: 1300px) {
+        margin-top: calc(100vw * (30 / 1300));
     }
 
-    @media screen and (max-width: 800px){
-        margin-top: calc(100vw*(30/800));
+    @media screen and (max-width: 800px) {
+        margin-top: calc(100vw * (30 / 800));
     }
-`
+`;
 const BurgerBox = styled.div`
     width: 30px;
     height: 20px;
@@ -275,22 +298,22 @@ const BurgerBox = styled.div`
     align-items: flex-start;
     flex-direction: column;
 
-    @media screen and (max-width: 800px){
+    @media screen and (max-width: 800px) {
         display: flex;
     }
-`
+`;
 
 const Burger = styled.span<IisLight>`
     display: inline-block;
     width: 30px;
     height: 3px;
-    background-color: ${props => props.isNav ? props.theme.bgColor : props.theme.textColor};
+    background-color: ${props =>
+        props.isNav ? props.theme.bgColor : props.theme.textColor};
     transition: 0.3s;
 
-    &:nth-of-type(2){
-        width: ${props => props.isNav ? "30px" : "10px"};
+    &:nth-of-type(2) {
+        width: ${props => (props.isNav ? "30px" : "10px")};
     }
-`
-
+`;
 
 export default Navbar;
