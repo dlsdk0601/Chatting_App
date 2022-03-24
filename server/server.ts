@@ -46,10 +46,14 @@ io.on("connection", (socket: any): void => {
             socket["nickname"] = nickname;
             socket.join(roomName);
             callback(nickname);
-
+            console.log("enter");
             socket.emit("roomList", roomList());
         }
     );
+    socket.on("sendText", (newText: any, callback: any) => {
+        console.log("asdfasdf");
+        callback(newText);
+    });
 });
 
 server.listen(8080, () => {

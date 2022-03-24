@@ -117,7 +117,8 @@ const Nav = styled.nav<IisNav>`
     position: fixed;
     width: 20%;
     height: 100vh;
-    background-color: #17536e;
+    /* background-color: #17536e; */
+    background-color: #046b99;
     border-radius: 0 40px 40px 0;
     align-items: center;
     transition: 0.5s;
