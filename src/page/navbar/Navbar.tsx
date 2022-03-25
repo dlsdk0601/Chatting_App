@@ -9,6 +9,7 @@ import { socket } from "../../socket";
 import Person from "../../img/person.png";
 import RoomName from "./component/RoomName";
 import { useNavigate } from "react-router-dom";
+import { IRoomList } from "../main/Main";
 
 interface IRoomName {
     roomName: string;
@@ -23,54 +24,30 @@ interface IisNav {
     isNav: boolean;
 }
 
-interface IRoomList {
-    id: number;
-    name: string;
+interface INavBar {
+    setRoomList: (prev: IRoomList[]) => void;
+    roomList: IRoomList[];
 }
 
-const Navbar = () => {
+const Navbar = ({ setRoomList, roomList }: INavBar) => {
     const navigate = useNavigate();
     const userData = useRecoilValue(user);
     const light = useRecoilValue(isLight);
     const [isNav, setIsNav] = useState<boolean>(false);
-    const [roomList, setRoomList] = useState<IRoomList[]>([]);
 
     const { register, setValue, handleSubmit } = useForm<IRoomName>();
 
     const createRoom = ({ roomName }: IRoomName) => {
-        socket.emit(
-            "enterRoom",
-            roomName,
-            userData.name,
-            (nickname: string) => {
-                setRoomList((prev: IRoomList[]) => {
-                    const obj = {
-                        id: prev.length === 0 ? 1 : prev.length + 1,
-                        name: roomName,
-                    };
-                    const arr: IRoomList[] = [...prev, obj];
-                    return arr;
-                });
-                setValue("roomName", "");
-                navigate(`/main/${roomName}`);
-            }
-        );
+        socket.emit("enterRoom", roomName, userData.name);
+        setValue("roomName", "");
+        navigate(`/main/${roomName}`);
     };
 
     const deleteItem = (name: string) => {
-        setRoomList((prev: IRoomList[]) => {
-            const arr: IRoomList[] = [...prev];
-            const newArr = arr.filter(item => item.name !== name);
-
-            return newArr;
-        });
+        const arr: IRoomList[] = [...roomList];
+        const newArr = arr.filter(item => item.name !== name);
+        setRoomList([...newArr]);
     };
-
-    useEffect(() => {
-        socket.on("roomList", rooms => {
-            // 서버에서 roomList라는 함수를 실행시켜서 전달하니까 return값을 받음.
-        });
-    }, [roomList]);
 
     return (
         <>

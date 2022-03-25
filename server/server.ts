@@ -36,23 +36,33 @@ const roomList = (): string[] => {
 io.on("connection", (socket: any): void => {
     console.log("socket success");
     socket["nickname"] = "someone";
+
+    socket.emit("roomList", roomList());
+    socket.on("takeList", (callback: (room: string[]) => void) => {
+        const arr = [...roomList()];
+        callback(arr);
+    });
+    socket.on("enterRoom", (roomName: string, nickname: string) => {
+        socket["nickname"] = nickname;
+        socket.join(roomName);
+        socket.emit("roomList", roomList());
+    });
+
     socket.on(
-        "enterRoom",
-        (
-            roomName: string,
-            nickname: string,
-            callback: (name: string) => void
-        ) => {
-            socket["nickname"] = nickname;
-            socket.join(roomName);
-            callback(nickname);
-            console.log("enter");
-            socket.emit("roomList", roomList());
+        "sendText",
+        (text: string, roomname: string, userName: string, callback: any) => {
+            const obj = {
+                text,
+                sender: userName,
+            };
+            socket.to(roomname).emit("new_message", obj);
+            // socket.emit("new_message", obj);
         }
     );
-    socket.on("sendText", (newText: any, callback: any) => {
-        console.log("asdfasdf");
-        callback(newText);
+
+    socket.on("changeRoom", (name: string): any => {
+        socket.join(name);
+        console.log("change");
     });
 });
 

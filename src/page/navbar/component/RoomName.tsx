@@ -1,8 +1,10 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 //img
 import Ex from "../../../img/ex.png";
+import { socket } from "../../../socket";
 
 interface IRoomName {
     name: string;
@@ -10,7 +12,11 @@ interface IRoomName {
 }
 
 const RoomName = ({ name, deleteItem }: IRoomName) => {
-    const enterRoom = () => {};
+    const navigate = useNavigate();
+    const enterRoom = () => {
+        navigate(`/main/${name}`);
+        socket.emit("changeRoom", name);
+    };
 
     return (
         <NameBox>

@@ -1,7 +1,10 @@
 import { emit } from "process";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router-dom";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
+import { user } from "../../atom";
 import { socket } from "../../socket";
 
 //components
@@ -12,7 +15,6 @@ import MyText from "./component/MyText";
 
 //interface
 interface ITextList {
-    id: number;
     text: string;
     sender: string;
 }
@@ -21,56 +23,53 @@ interface IText {
     text: string;
 }
 
-const Room = () => {
+interface IRoom {
+    roomname: string;
+}
+
+const Room = ({ roomname }: IRoom) => {
+    const userData = useRecoilValue(user);
+    const navigate = useNavigate();
     const [textList, setTextList] = useState<ITextList[]>([]);
     const { register, setValue, handleSubmit } = useForm<IText>();
     useEffect(() => {
-        const list = [
-            { id: 1, text: "abcdefg", sender: "user" },
-            { id: 2, text: "asdf", sender: "stranger" },
-            { id: 3, text: "fff", sender: "user" },
-            { id: 4, text: "zzzzz", sender: "stranger" },
-            { id: 5, text: "zxcvzxcvzxcv", sender: "user" },
-            { id: 6, text: "ccscscscs", sender: "stranger" },
-        ];
-        setTextList([...list]);
-        socket.on("roomList", roomList => {
-            console.log(roomList);
+        socket.emit("roomList", (roomList: string[]) => {
+            if (roomList.length === 0) {
+                navigate("/");
+            }
         });
     }, []);
 
-    console.log("textList===");
-    console.log(textList);
+    const addText = (obj: ITextList) => {
+        setTextList((prev: ITextList[]) => {
+            const newArr = [...prev, obj];
+            return newArr;
+        });
+        setValue("text", "");
+    };
 
     const sendText = ({ text }: IText) => {
-        console.log("start");
-        console.log(text);
-        const newText = {
-            id: textList.length === 0 ? "0" : textList.length + 1,
+        const obj = {
             text,
-            sender: "user",
+            sender: userData.name,
         };
-        console.log(newText);
-
-        socket.emit("sendText", newText, (newText: ITextList) => {
-            console.log("cb");
-            setTextList((prev: ITextList[]) => {
-                const newArr = [...prev, newText];
-
-                return newArr;
-            });
-        });
+        addText(obj);
+        socket.emit("sendText", text, roomname, userData.name);
     };
+
+    useEffect(() => {
+        socket.on("new_message", (obj: ITextList) => addText(obj));
+    }, []);
 
     return (
         <Container>
             <ChattBox>
-                {textList.map((item: ITextList) => {
+                {textList.map((item: ITextList, index: number) => {
                     // if (item.sender === "user") {
                     return (
                         <MyText
-                            key={item.id}
-                            isUser={item.sender === "user"}
+                            key={index}
+                            isUser={item.sender === userData.name}
                             text={item.text}
                         ></MyText>
                     );
@@ -151,4 +150,4 @@ const Btn = styled.button`
     border-radius: 25px;
 `;
 
-export default Room;
+export default React.memo(Room);
