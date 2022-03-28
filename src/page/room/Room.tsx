@@ -6,6 +6,7 @@ import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { user } from "../../atom";
 import { socket } from "../../socket";
+import { IRoomList } from "../main/Main";
 
 //components
 import Navbar from "../navbar/Navbar";
@@ -24,10 +25,16 @@ interface IText {
 }
 
 interface IRoom {
-    roomname: string;
+    roomname: string | undefined;
+    roomList: IRoomList[];
+    isIn: boolean;
 }
 
-const Room = ({ roomname }: IRoom) => {
+interface IisIn {
+    isIn: boolean;
+}
+
+const Room = ({ roomname, roomList, isIn }: IRoom) => {
     const userData = useRecoilValue(user);
     const navigate = useNavigate();
     const [textList, setTextList] = useState<ITextList[]>([]);
@@ -38,9 +45,15 @@ const Room = ({ roomname }: IRoom) => {
                 navigate("/");
             }
         });
+        socket.on("new_message", (room: string, obj: ITextList) => {
+            addText(obj, room);
+        });
     }, []);
 
-    const addText = (obj: ITextList) => {
+    const addText = (obj: ITextList, room: string) => {
+        if (roomname !== room) {
+            return;
+        }
         setTextList((prev: ITextList[]) => {
             const newArr = [...prev, obj];
             return newArr;
@@ -53,21 +66,25 @@ const Room = ({ roomname }: IRoom) => {
             text,
             sender: userData.name,
         };
-        addText(obj);
+        const name = roomname || "";
+        addText(obj, name);
         socket.emit("sendText", text, roomname, userData.name);
     };
 
-    useEffect(() => {
-        socket.on("new_message", (obj: ITextList) => addText(obj));
-    }, []);
+    // useEffect(() => {
+    //     if (roomList.length === 0) {
+    //         navigate("/main");
+    //     }
+    // }, [roomList]);
 
     return (
-        <Container>
+        <Container isIn={isIn}>
             <ChattBox>
                 {textList.map((item: ITextList, index: number) => {
                     // if (item.sender === "user") {
                     return (
                         <MyText
+                            sender={item.sender}
                             key={index}
                             isUser={item.sender === userData.name}
                             text={item.text}
@@ -88,24 +105,33 @@ const Room = ({ roomname }: IRoom) => {
     );
 };
 
-const Container = styled.div`
-    width: 50vw;
-    height: 80vh;
-    /* background: grey; */
+const Container = styled.div<IisIn>`
+    width: 80vw;
+    height: 85vh;
     position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 50px;
+    right: 0;
+    top: 52%;
+    transform: translate(0, -50%);
+    border-radius: 35px;
     box-shadow: 0 4px 5px rgba(0, 0, 0, 0.6);
     overflow: hidden;
     border: 1px solid #acacac;
+    display: ${props => (props.isIn ? "block" : "none")};
+
+    @media screen and (max-width: 1300px) {
+        width: calc(100vw * (950 / 1300));
+    }
+
+    @media screen and (max-width: 800px) {
+        right: 50%;
+        transform: translate(50%, -50%);
+    }
 `;
 
 const ChattBox = styled.div`
     width: 100%;
     height: 83%;
-    margin-top: 5%;
+    margin-top: 3%;
     overflow-y: scroll;
     &::-webkit-scrollbar {
         width: 8px;
@@ -114,6 +140,10 @@ const ChattBox = styled.div`
         height: 17%;
         border-radius: 10px;
         background: #ccc;
+    }
+
+    @media screen and (max-width: 800px) {
+        margin-top: 10%;
     }
 `;
 
@@ -148,6 +178,17 @@ const Btn = styled.button`
     background: #046b99;
     color: white;
     border-radius: 25px;
+
+    @media screen and (max-width: 1300px) {
+        width: calc(100vw * (90 / 1300));
+        height: calc(100vw * (30 / 1300));
+    }
+
+    @media screen and (max-width: 800px) {
+        width: calc(100vw * (90 / 800));
+        font-size: 10px;
+        height: calc(100vw * (50 / 800));
+    }
 `;
 
 export default React.memo(Room);

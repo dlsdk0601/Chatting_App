@@ -108,6 +108,7 @@ const Nav = styled.nav<IisNav>`
         position: absolute;
         left: ${props => (props.isNav ? "0" : "-100%")};
         width: calc(100vw * (350 / 800));
+        z-index: 1;
     }
 `;
 

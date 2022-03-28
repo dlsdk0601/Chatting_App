@@ -1,6 +1,8 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
+import { user } from "../../../atom";
 
 //img
 import Ex from "../../../img/ex.png";
@@ -13,9 +15,11 @@ interface IRoomName {
 
 const RoomName = ({ name, deleteItem }: IRoomName) => {
     const navigate = useNavigate();
+    const userData = useRecoilValue(user);
+
     const enterRoom = () => {
+        socket.emit("enterRoom", name, userData.name);
         navigate(`/main/${name}`);
-        socket.emit("changeRoom", name);
     };
 
     return (
@@ -40,11 +44,20 @@ const Name = styled.p`
     line-height: 30px;
     width: 50%;
     cursor: pointer;
+
+    @media screen and (max-width: 800px) {
+        font-size: 12px;
+    }
 `;
 const Img = styled.img`
     width: 30px;
     height: 30px;
     cursor: pointer;
+
+    @media screen and (max-width: 800px) {
+        width: 15px;
+        height: 15px;
+    }
 `;
 
 export default RoomName;

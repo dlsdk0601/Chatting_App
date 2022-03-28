@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 //interface
 interface IMyTextProp {
+    sender: string;
     text: string;
     isUser: boolean;
 }
@@ -11,11 +12,20 @@ interface IText {
     isUser: boolean;
 }
 
-const MyText = ({ text, isUser }: IMyTextProp) => {
+const MyText = ({ text, isUser, sender }: IMyTextProp) => {
     return (
-        <TextBox isUser={isUser}>
-            <Text isUser={isUser}>{text}</Text>
-        </TextBox>
+        <>
+            {sender === "server" ? (
+                <TextBox isUser={isUser}>
+                    <WelcomeText>{text}</WelcomeText>
+                </TextBox>
+            ) : (
+                <TextBox isUser={isUser}>
+                    {!isUser && <Sender>{sender} : </Sender>}
+                    <Text isUser={isUser}>{text}</Text>
+                </TextBox>
+            )}
+        </>
     );
 };
 
@@ -27,6 +37,10 @@ const TextBox = styled.div<IText>`
     justify-content: ${props => (props.isUser ? "flex-end" : "flex-start")};
     align-items: center;
     padding: 0 10px;
+
+    @media screen and (max-width: 800px) {
+        height: 20px;
+    }
 `;
 
 const Text = styled.span<IText>`
@@ -37,6 +51,28 @@ const Text = styled.span<IText>`
     line-height: 2;
     padding: 0 10px;
     border-radius: 5px;
+    margin-left: 10px;
+
+    @media screen and (max-width: 800px) {
+        font-size: 10px;
+        margin-left: 5px;
+    }
 `;
 
-export default MyText;
+const WelcomeText = styled.p`
+    text-align: center;
+    background: #acacac;
+    color: ${props => props.theme.textColor};
+
+    @media screen and (max-width: 800px) {
+        font-size: 10px;
+    }
+`;
+
+const Sender = styled.span`
+    @media screen and (max-width: 800px) {
+        font-size: 10px;
+    }
+`;
+
+export default React.memo(MyText);
