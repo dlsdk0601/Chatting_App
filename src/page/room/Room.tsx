@@ -71,12 +71,6 @@ const Room = ({ roomname, roomList, isIn }: IRoom) => {
         socket.emit("sendText", text, roomname, userData.name);
     };
 
-    // useEffect(() => {
-    //     if (roomList.length === 0) {
-    //         navigate("/main");
-    //     }
-    // }, [roomList]);
-
     return (
         <Container isIn={isIn}>
             <ChattBox>
@@ -125,6 +119,7 @@ const Container = styled.div<IisIn>`
     @media screen and (max-width: 800px) {
         right: 50%;
         transform: translate(50%, -50%);
+        width: 90vw;
     }
 `;
 
@@ -167,17 +162,23 @@ const Text = styled.input`
     border: none;
     background: none;
     padding-left: 10px;
+    color: ${props => props.theme.textColor};
+
+    @media screen and (max-width: 800px) {
+        width: calc(100vw * (580 / 800));
+    }
 `;
 
 const Btn = styled.button`
     margin-right: 2.5%;
     width: 10%;
-    height: 55%;
+    height: 80%;
     border: none;
     background: none;
     background: #046b99;
     color: white;
     border-radius: 25px;
+    cursor: pointer;
 
     @media screen and (max-width: 1300px) {
         width: calc(100vw * (90 / 1300));
@@ -187,7 +188,7 @@ const Btn = styled.button`
     @media screen and (max-width: 800px) {
         width: calc(100vw * (90 / 800));
         font-size: 10px;
-        height: calc(100vw * (50 / 800));
+        height: calc(100vw * (40 / 800));
     }
 `;
 

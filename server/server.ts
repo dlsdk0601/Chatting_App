@@ -44,18 +44,14 @@ io.on("connection", (socket: any): void => {
     });
     socket.on("enterRoom", (roomName: string, nickname: string) => {
         const room = Array.from(socket.rooms);
-        let isThere = false;
-        for (let i = 0; i < room.length; i++) {
-            if (room[i] === roomName) {
-                isThere = true;
-            }
-        }
+        const isThere = room.some(item => item === roomName);
 
         if (!isThere) {
             socket["nickname"] = nickname;
             socket.join(roomName);
+            socket.emit("onout", roomName);
             socket.to(roomName).emit("welcome", roomName, nickname);
-            socket.emit("roomList", roomList());
+            // socket.emit("roomList", roomList());
         }
     });
 
@@ -67,7 +63,6 @@ io.on("connection", (socket: any): void => {
                 sender: userName,
             };
             socket.to(roomname).emit("new_message", roomname, obj);
-            // socket.emit("new_message", obj);
         }
     );
 
@@ -76,12 +71,12 @@ io.on("connection", (socket: any): void => {
         (
             roomName: string,
             userName: string,
-            enterRoomName: string,
-            done: (name: string, userName: string) => void
+            callBack: (name: string) => void
         ) => {
-            console.log(`${userName}님이 ${roomName}을 나감`);
+            const msg = `${userName}님이 ${roomName}을 나갔습니다.`;
             socket.leave(roomName);
-            done(enterRoomName, userName);
+            callBack(roomName);
+            socket.to(roomName).emit("goodBye", msg, roomName);
         }
     );
 });

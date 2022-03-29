@@ -27,9 +27,10 @@ interface IisNav {
 interface INavBar {
     setRoomList: (prev: IRoomList[]) => void;
     roomList: IRoomList[];
+    welcomeMsg: (msg: string) => void;
 }
 
-const Navbar = ({ setRoomList, roomList }: INavBar) => {
+const Navbar = ({ setRoomList, roomList, welcomeMsg }: INavBar) => {
     const navigate = useNavigate();
     const userData = useRecoilValue(user);
     const light = useRecoilValue(isLight);
@@ -44,10 +45,18 @@ const Navbar = ({ setRoomList, roomList }: INavBar) => {
     };
 
     const deleteItem = (name: string) => {
-        const arr: IRoomList[] = [...roomList];
-        const newArr = arr.filter(item => item.name !== name);
-        setRoomList([...newArr]);
+        socket.emit("leaveRoom", name, userData.name, (name: string) => {
+            const arr: IRoomList[] = [...roomList];
+            const newArr = arr.filter(item => item.name !== name);
+            setRoomList([...newArr]);
+        });
     };
+
+    useEffect(() => {
+        socket.on("goodBye", (msg: string, room: string) => {
+            welcomeMsg(msg);
+        });
+    }, []);
 
     return (
         <>
@@ -77,6 +86,7 @@ const Navbar = ({ setRoomList, roomList }: INavBar) => {
                         roomList.map(item => (
                             <RoomName
                                 key={item.id}
+                                onout={item.onOut}
                                 deleteItem={deleteItem}
                                 name={item.name}
                             />
