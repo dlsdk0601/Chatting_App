@@ -20,6 +20,7 @@ const Main = () => {
     const [roomList, setRoomList] = useState<IRoomList[]>([]);
     const [alert, setAlert] = useState("");
     const [isShow, setIsShow] = useState(false);
+
     socket.emit("takeList", (room: string[]): void => {
         const arr = [];
         for (let i = 0; i < room.length; i++) {
@@ -57,8 +58,6 @@ const Main = () => {
                     }
                     newArr.push(prev[i]);
                 }
-                console.log("newArr===");
-                console.log(newArr);
                 return newArr;
             });
         });

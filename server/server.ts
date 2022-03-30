@@ -16,13 +16,13 @@ const io = socketIo(server, {
     },
 });
 
-const roomList = (): string[] => {
-    const {
-        sockets: {
-            adapter: { sids, rooms },
-        },
-    } = io;
+const {
+    sockets: {
+        adapter: { sids, rooms },
+    },
+} = io;
 
+const roomList = (): string[] => {
     const roomList: string[] = [];
     rooms.forEach((value: any, key: string): void => {
         if (sids.get(key) === undefined) {
@@ -33,12 +33,17 @@ const roomList = (): string[] => {
     return roomList;
 };
 
+const RoomObj = {};
+
 io.on("connection", (socket: any): void => {
     console.log("socket success");
     socket["nickname"] = "someone";
 
-    socket.emit("roomList", roomList());
     socket.on("takeList", (callback: (room: string[]) => void) => {
+        const roomArr = Array.from(sids.get(socket.id)).filter(
+            item => item !== socket.id
+        );
+
         const arr = [...roomList()];
         callback(arr);
     });
@@ -51,7 +56,6 @@ io.on("connection", (socket: any): void => {
             socket.join(roomName);
             socket.emit("onout", roomName);
             socket.to(roomName).emit("welcome", roomName, nickname);
-            // socket.emit("roomList", roomList());
         }
     });
 
