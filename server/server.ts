@@ -42,10 +42,10 @@ io.on("connection", (socket: any): void => {
     socket.on("takeList", (callback: (room: string[]) => void) => {
         const roomArr = Array.from(sids.get(socket.id)).filter(
             item => item !== socket.id
-        );
+        ); //유저가 들어간 룸 리스트
+        const allRoomList = [...roomList()]; //allRoomList
 
-        const arr = [...roomList()];
-        callback(arr);
+        // callback(arr);
     });
     socket.on("enterRoom", (roomName: string, nickname: string) => {
         const room = Array.from(socket.rooms);
