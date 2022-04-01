@@ -44,11 +44,14 @@ const Navbar = ({ setRoomList, roomList, welcomeMsg }: INavBar) => {
         navigate(`/main/${roomName}`);
     };
 
-    const deleteItem = (name: string) => {
+    const deleteItem = (name: string, onout: boolean) => {
         socket.emit("leaveRoom", name, userData.name, (name: string) => {
-            const arr: IRoomList[] = [...roomList];
-            const newArr = arr.filter(item => item.name !== name);
-            setRoomList([...newArr]);
+            if (onout) {
+                const arr: IRoomList[] = [...roomList];
+                const newArr = arr.filter(item => item.name !== name);
+                setRoomList([...newArr]);
+                navigate("/main");
+            }
         });
     };
 

@@ -10,7 +10,7 @@ import { socket } from "../../../socket";
 
 interface IRoomName {
     name: string;
-    deleteItem: (name: string) => void;
+    deleteItem: (name: string, onOut: boolean) => void;
     onout: boolean;
 }
 
@@ -26,7 +26,7 @@ const RoomName = ({ name, deleteItem, onout }: IRoomName) => {
     return (
         <NameBox>
             <Name onClick={enterRoom}>{name}</Name>
-            <OnOut onClick={() => deleteItem(name)}>
+            <OnOut onClick={() => deleteItem(name, onout)}>
                 {onout ? "on" : "out"}
             </OnOut>
         </NameBox>

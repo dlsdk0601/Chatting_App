@@ -1,8 +1,3 @@
-// import { Socket, Server } from "socket.io";
-// import cors from "cors";
-// import express from "express";
-// import http from "http";
-
 const express = require("express");
 const http = require("http");
 const socketIo = require("socket.io");
@@ -39,13 +34,22 @@ io.on("connection", (socket: any): void => {
     console.log("socket success");
     socket["nickname"] = "someone";
 
-    socket.on("takeList", (callback: (room: string[]) => void) => {
+    socket.on("takeList", (callback: (room: any) => void) => {
         const roomArr = Array.from(sids.get(socket.id)).filter(
             item => item !== socket.id
         ); //유저가 들어간 룸 리스트
-        const allRoomList = [...roomList()]; //allRoomList
+        const allRoomList: string[] = [...roomList()]; //allRoomList
+        //UI에 참여한 방 참여하지 않은 방 표시를 위해
+        //두 배열의 차집합을 구한다.
 
-        // callback(arr);
+        const enteredRoom = allRoomList.map((room: string, index: number) => {
+            return {
+                id: index,
+                name: room,
+                onOut: roomArr.includes(room),
+            };
+        });
+        callback(enteredRoom);
     });
     socket.on("enterRoom", (roomName: string, nickname: string) => {
         const room = Array.from(socket.rooms);
