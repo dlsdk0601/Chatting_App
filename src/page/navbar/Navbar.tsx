@@ -45,6 +45,9 @@ const Navbar = ({ setRoomList, roomList, welcomeMsg }: INavBar) => {
     };
 
     const deleteItem = (name: string, onout: boolean) => {
+        if (!onout) {
+            return;
+        }
         socket.emit("leaveRoom", name, userData.name, (name: string) => {
             if (onout) {
                 const arr: IRoomList[] = [...roomList];

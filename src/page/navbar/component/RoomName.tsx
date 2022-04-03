@@ -27,7 +27,7 @@ const RoomName = ({ name, deleteItem, onout }: IRoomName) => {
         <NameBox>
             <Name onClick={enterRoom}>{name}</Name>
             <OnOut onClick={() => deleteItem(name, onout)}>
-                {onout ? "on" : "out"}
+                {onout ? "out" : "join"}
             </OnOut>
         </NameBox>
     );
@@ -53,10 +53,10 @@ const Name = styled.p`
         font-size: 12px;
     }
 `;
-const OnOut = styled.span`
-    display: inline-block;
+const OnOut = styled.p`
     width: 30px;
     height: 30px;
+    line-height: 30px;
     cursor: pointer;
     color: white;
 

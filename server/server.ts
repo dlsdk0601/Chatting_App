@@ -17,6 +17,10 @@ const {
     },
 } = io;
 
+app.set("build", __dirname + "../build");
+app.use("/build", express.static(__dirname + "/build"));
+app.get("/", (req: any, res: any) => res.render("index"));
+
 const roomList = (): string[] => {
     const roomList: string[] = [];
     rooms.forEach((value: any, key: string): void => {
@@ -27,8 +31,6 @@ const roomList = (): string[] => {
 
     return roomList;
 };
-
-const RoomObj = {};
 
 io.on("connection", (socket: any): void => {
     console.log("socket success");
@@ -81,7 +83,7 @@ io.on("connection", (socket: any): void => {
             userName: string,
             callBack: (name: string) => void
         ) => {
-            const msg = `${userName}님이 ${roomName}을 나갔습니다.`;
+            const msg = `${userName}님이 ${roomName}방을 나갔습니다.`;
             socket.leave(roomName);
             callBack(roomName);
             socket.to(roomName).emit("goodBye", msg, roomName);
