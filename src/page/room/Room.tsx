@@ -1,5 +1,5 @@
 import { emit } from "process";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { useRecoilValue } from "recoil";
@@ -39,6 +39,7 @@ const Room = ({ roomname, roomList, isIn }: IRoom) => {
     const navigate = useNavigate();
     const [textList, setTextList] = useState<ITextList[]>([]);
     const { register, setValue, handleSubmit } = useForm<IText>();
+    const scroll = useRef<null | HTMLDivElement>(null);
     useEffect(() => {
         socket.emit("roomList", (roomList: string[]) => {
             if (roomList.length === 0) {
@@ -70,10 +71,18 @@ const Room = ({ roomname, roomList, isIn }: IRoom) => {
         addText(obj, name);
         socket.emit("sendText", text, roomname, userData.name);
     };
+    useEffect(() => {
+        // const scrollHeight = scroll?.current?.scrollHeight || 0;
+        // const clientHeight = scroll?.current?.clientHeight || 0;
+        // if (scroll?.current?.scrollTop) {
+        //     scroll?.current?.scrollTop = scrollHeight - clientHeight;
+        // }
+        scroll?.current?.scrollIntoView();
+    }, [textList]);
 
     return (
         <Container isIn={isIn}>
-            <ChattBox>
+            <ChattBox ref={scroll}>
                 {textList.map((item: ITextList, index: number) => {
                     // if (item.sender === "user") {
                     return (
@@ -135,6 +144,10 @@ const ChattBox = styled.div`
         height: 17%;
         border-radius: 10px;
         background: #ccc;
+    }
+
+    @media screen and (max-width: 1300px) {
+        margin-top: 15%;
     }
 
     @media screen and (max-width: 800px) {

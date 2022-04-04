@@ -17,9 +17,11 @@ const {
     },
 } = io;
 
-app.set("build", __dirname + "../build");
-app.use("/build", express.static(__dirname + "/build"));
-app.get("/", (req: any, res: any) => res.render("index"));
+// app.set("build", __dirname + "../build");
+// app.use("/build", express.static(__dirname + "../build"));
+app.get("/", (req: any, res: any) => {
+    res.sendFile(__dirname + "/build/index.html");
+});
 
 const roomList = (): string[] => {
     const roomList: string[] = [];

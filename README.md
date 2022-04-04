@@ -17,7 +17,7 @@
 
 ## 실행
 
-해당 깃을 클론 받고 npm i 후, nodemon 다운 받고 npm run dev로 실행 시키면 된다.
+해당 깃을 클론 받고 npm i 후, nodemon 다운 받고 npm run dev로 서버를 실행 시키고, npm run start로 클라이언트를 실행시킬 수 있다.
 
 <br />
 
@@ -74,6 +74,7 @@ sids.get(socket.id)를 이용하면, 해당 소켓이 참여한 방의 리스트
 <br />
 
 ```
-    const roomArr = Array.from(sids.get(socket.id)).filter(item => item !== socket.id); //유저가 들어간 룸 리스트
+    const roomArr = Array.from(sids.get(socket.id)).filter(item => item !== socket.id);
+    //유저가 들어간 룸 리스트
     const allRoomList: string[] = [...roomList()];
 ```
