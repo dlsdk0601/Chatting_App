@@ -6,21 +6,25 @@ interface IMyTextProp {
     sender: string;
     text: string;
     isUser: boolean;
+    scroll: {
+        current: null | HTMLDivElement;
+    };
+    last: boolean;
 }
 
 interface IText {
     isUser: boolean;
 }
 
-const MyText = ({ text, isUser, sender }: IMyTextProp) => {
+const MyText = ({ text, isUser, sender, scroll, last }: IMyTextProp) => {
     return (
         <>
             {sender === "server" ? (
-                <TextBox isUser={isUser}>
+                <TextBox ref={last ? scroll : null} isUser={isUser}>
                     <WelcomeText>{text}</WelcomeText>
                 </TextBox>
             ) : (
-                <TextBox isUser={isUser}>
+                <TextBox ref={last ? scroll : null} isUser={isUser}>
                     {!isUser && <Sender>{sender} : </Sender>}
                     <Text isUser={isUser}>{text}</Text>
                 </TextBox>

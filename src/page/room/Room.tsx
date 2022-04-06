@@ -72,28 +72,25 @@ const Room = ({ roomname, roomList, isIn }: IRoom) => {
         socket.emit("sendText", text, roomname, userData.name);
     };
     useEffect(() => {
-        // const scrollHeight = scroll?.current?.scrollHeight || 0;
-        // const clientHeight = scroll?.current?.clientHeight || 0;
-        // if (scroll?.current?.scrollTop) {
-        //     scroll?.current?.scrollTop = scrollHeight - clientHeight;
-        // }
+        const scrollHeight = scroll?.current?.scrollHeight || 0;
+        const clientHeight = scroll?.current?.clientHeight || 0;
         scroll?.current?.scrollIntoView();
     }, [textList]);
 
     return (
         <Container isIn={isIn}>
-            <ChattBox ref={scroll}>
+            <ChattBox>
                 {textList.map((item: ITextList, index: number) => {
-                    // if (item.sender === "user") {
                     return (
                         <MyText
+                            scroll={scroll}
                             sender={item.sender}
+                            last={index === textList.length - 1}
                             key={index}
                             isUser={item.sender === userData.name}
                             text={item.text}
                         ></MyText>
                     );
-                    // }
                 })}
             </ChattBox>
             <TextBox>
